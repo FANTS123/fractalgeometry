@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sierpinski Carpet Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .controls {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        canvas {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🌀 Sierpinski Carpet Generator</h1>
+
+    <div class="controls">
+        <div class="control-group">
+            <label for="iterations">Iterasi: <span id="iter-val">3</span></label>
+            <input type="range" id="iterations" min="0" max="5" value="3">
+        </div>
+    </div>
+
+    <canvas id="carpetCanvas" width="500" height="500"></canvas>
+
+    <script>
+        const canvas = document.getElementById('carpetCanvas');
+        const ctx = canvas.getContext('2d');
+        const iterInput = document.getElementById('iterations');
+        const iterVal = document.getElementById('iter-val');
+
+        function drawSquare(x, y, size) {
+            ctx.fillRect(x, y, size, size);
+        }
+
+        function sierpinski(x, y, size, depth) {
+            if (depth === 0) {
+                drawSquare(x, y, size);
+                return;
+            } 
+
+            const newSize = size / 3;
+
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    // Melewati bagian tengah untuk membuat lubang karpet
+                    if (i === 1 && j === 1) continue;
+                    
+                    sierpinski(x + i * newSize, y + j * newSize, newSize, depth - 1);
+                }
+            }
+        }
+
+        function updateCanvas() {
+            const depth = parseInt(iterInput.value);
+            iterVal.textContent = depth;
+
+            // Bersihkan canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#2c3e50';
+
+            // Gambar fractal
+            sierpinski(0, 0, canvas.width, depth);
+        }
+
+        iterInput.addEventListener('input', updateCanvas);
+
+        // Gambar pertama kali
+        updateCanvas();
+    </script>
+</body>
+</html>
